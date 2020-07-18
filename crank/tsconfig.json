@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "noUnusedLocals": true,
+        "noImplicitReturns": true,
+        "noUnusedParameters": true,
+        "strictPropertyInitialization": true,
+        "strictNullChecks": true,
+        "module": "CommonJS",
+        "target": "ES5",
+        "jsx": "react",
+        "jsxFactory": "createElement"
+    }
+}
