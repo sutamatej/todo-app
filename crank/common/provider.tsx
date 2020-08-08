@@ -1,12 +1,12 @@
 import { createElement, Context, Fragment, Children } from "@bikeshaving/crank";
-import { TodoStore } from "../app/store";
+import { Store } from "redux";
 
-type ProviderProps = {
-    store: TodoStore, // @Incomplete this should be a generic store to allow reuse
+type ProviderProps<TStore> = {
+    store: TStore,
     children: Children
 };
 
-export function *Provider(this: Context, { store, children }: ProviderProps) {
+export function *Provider<TStore extends Store>(this: Context, { store, children }: ProviderProps<TStore>) {
     const unsubscribe = store.subscribe(() => {
         this.refresh();
     });

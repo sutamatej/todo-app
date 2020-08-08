@@ -1,11 +1,9 @@
 import { createElement, Element, Context } from "@bikeshaving/crank";
-// import { dispatch } from '../../common/provider';
 import { addTodo } from './todos';
-import { TodoStore } from "../../app/store";
 
 export function AddTodo(this: Context): Element {
     let todoText: string = '';
-    const store: TodoStore = this.consume("store");
+    const store = this.consume("store");
 
     return (
         <form onsubmit={(e: Event) => {

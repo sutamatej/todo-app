@@ -1,6 +1,5 @@
 import { createElement, Element, Context } from "@bikeshaving/crank";
 import { VisibilityFilterType, TodoAppState, toggleTodo } from './todos';
-import { TodoStore } from "../../app/store";
 
 function getVisibleTodos(state: TodoAppState) {
     switch (state.visibilityFilter) {
@@ -14,8 +13,7 @@ function getVisibleTodos(state: TodoAppState) {
 }
 
 export function TodoList(this: Context): Element {
-    // @Robustness add strong typing to this.get call
-    const store: TodoStore = this.consume("store");
+    const store = this.consume("store");
     const state = store.getState();
     const todos = getVisibleTodos(state);
     return (

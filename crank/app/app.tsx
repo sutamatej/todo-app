@@ -3,13 +3,18 @@ import { TodoStore } from './store';
 import { AddTodo, TodoList, TodoFilter } from '../features/todos';
 import { Provider } from '../common/provider';
 
+declare global {
+    module Crank {
+        interface ProvisionMap {
+            store: TodoStore;
+        }
+    }
+}
 
 export function App({ store }: { store: TodoStore}): Element {
-    // setStore(store);
-
-    // @Incomplete should the Provider component wrap the whole application?
     return (
-        <Provider store={store}>
+        // @Robustness is it possible to get rid of this ugly cast to any?
+        <Provider store={store as any}>
             <div class='container'>
                 <AddTodo />
                 <TodoList />
