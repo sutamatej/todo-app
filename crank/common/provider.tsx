@@ -13,7 +13,7 @@ export function *Provider(this: Context, { store, children }: ProviderProps) {
 
     // save the reference to the store so that it's globally available
     // in all child components via this.get("store")
-    this.set("store", store);
+    this.provide("store", store);
 
     try {
         while (true) {

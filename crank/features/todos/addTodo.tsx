@@ -5,7 +5,7 @@ import { TodoStore } from "../../app/store";
 
 export function AddTodo(this: Context): Element {
     let todoText: string = '';
-    const store: TodoStore = this.get("store");
+    const store: TodoStore = this.consume("store");
 
     return (
         <form onsubmit={(e: Event) => {

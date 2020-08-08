@@ -4,7 +4,7 @@ import { setVisibilityFilter, VisibilityFilterType } from './todos';
 import { TodoStore } from "../../app/store";
 
 export function TodoFilter(this: Context): Element {
-    const store: TodoStore = this.get("store");
+    const store: TodoStore = this.consume("store");
     
     return (
         <div>

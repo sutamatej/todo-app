@@ -15,7 +15,7 @@ function getVisibleTodos(state: TodoAppState) {
 
 export function TodoList(this: Context): Element {
     // @Robustness add strong typing to this.get call
-    const store: TodoStore = this.get("store");
+    const store: TodoStore = this.consume("store");
     const state = store.getState();
     const todos = getVisibleTodos(state);
     return (
