@@ -13,8 +13,7 @@ declare global {
 
 export function App({ store }: { store: TodoStore}): Element {
     return (
-        // @Robustness is it possible to get rid of this ugly cast to any?
-        <Provider store={store as any}>
+        <Provider store={store}>
             <div class='container'>
                 <AddTodo />
                 <TodoList />

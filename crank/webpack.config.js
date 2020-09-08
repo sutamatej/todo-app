@@ -35,7 +35,7 @@ module.exports = env => {
             new CleanWebpackPlugin(),
             new MiniCssExtractPlugin(),
             new HtmlWebpackPlugin({
-                title: 'Meetr - DEV'
+                title: 'Todo - DEV'
             })
         ],
         output: {

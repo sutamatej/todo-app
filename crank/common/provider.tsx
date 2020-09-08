@@ -1,12 +1,12 @@
 import { createElement, Context, Fragment, Children } from "@bikeshaving/crank";
-import { Store } from "redux";
+import { Store, Action } from "redux";
 
-type ProviderProps<TStore> = {
-    store: TStore,
+type ProviderProps<TState, TAction extends Action> = {
+    store: Store<TState, TAction>,
     children: Children
 };
 
-export function *Provider<TStore extends Store>(this: Context, { store, children }: ProviderProps<TStore>) {
+export function *Provider<TState, TAction extends Action>(this: Context, { store, children }: ProviderProps<TState, TAction>) {
     const unsubscribe = store.subscribe(() => {
         this.refresh();
     });
