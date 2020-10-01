@@ -14,49 +14,43 @@ type ProviderProps<TState, TAction extends Action> = {
     children: Children
 };
 
-export function *Provider<TState, TAction extends Action>(this: Context, { store, children }: ProviderProps<TState, TAction>) {
-    // @Incomplete
-    // When used in combination with connect function, this should basically just
-    // set the store provider and render children. Store (un)subscription is handled by
-    // the connect function.
-    const unsubscribe = store.subscribe(() => {
-        this.refresh();
-    });
 
+// Provider component saves the store reference to the context so that it's
+// globally available to all children. This is primarily intended to be used in
+// combination with the "connect" function
+export function *Provider<TState, TAction extends Action>(
+    this: Context,
+    { store, children }: ProviderProps<TState, TAction>
+) {
     // save the reference to the store so that it's globally available
     // in all child components via this.get("store")
     this.provide("store", store);
 
-    try {
-        while (true) {
-            // @Robustness is Fragment really needed here?
-            yield (
-                <Fragment>
-                    {children}
-                </Fragment>
-            );
-        }
-    } finally {
-        unsubscribe();
+    while (true) {
+        yield (
+            <Fragment>
+                {children}
+            </Fragment>
+        );
     }
 }
 
-// @Incomplete - create a connect function that will extract the store from the context
+// This is a naive implementation of "connect" function that will extract the store from the context
 // and will provide selected dispatch functions and selected state as props to the particular
 // component merged with component's own props in a fashion similar to react-redux connect function
 
 // https://gist.github.com/gaearon/1d19088790e70ac32ea636c025ba424e
 // https://crank.js.org/guides/special-props-and-tags#copy
 
-type MapStateToProps<TState, TProps, TOwnProps> = (state: TState, props: TProps) => TOwnProps;
-type MapDispatchToProps<TProps, TOwnProps> = (dispatch: Dispatch<AnyAction>, props: TProps) => TOwnProps;
+type MapStateToProps<TState, TProps, TOwnProps> = (state: TState, props: TProps) => Partial<TOwnProps> | void;
+type MapDispatchToProps<TProps, TOwnProps> = (dispatch: Dispatch<AnyAction>, props: TProps) => Partial<TOwnProps> | void;
 
 export function connect<TState, TOwnProps, TProps>(
     mapStateToProps: MapStateToProps<TState, TProps, TOwnProps>,
     mapDispatchToProps: MapDispatchToProps<TProps, TOwnProps>
 ) {
     return (WrappedComponent: Component) => {
-        return function *Wrapper(this: Context, { props }: { props: any }) {
+        return function *Wrapper(this: Context, { props }: { props?: any }) {
             const store = this.consume("store");
         
             const unsubscribe = store.subscribe(() => {

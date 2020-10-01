@@ -1,14 +1,24 @@
-import { createElement, Element, Context } from "@bikeshaving/crank";
+import { createElement, Element } from "@bikeshaving/crank";
 import { setVisibilityFilter, VisibilityFilterType } from './todos';
+import { connect } from '../../common/provider';
 
-export function TodoFilter(this: Context): Element {
-    const store = this.consume("store");
-    
+interface TodoFilterProps {
+    readonly setVisibilityFilter: (filter: VisibilityFilterType) => void;
+}
+
+function TodoFilter(props: TodoFilterProps): Element {
     return (
         <div>
-            <button onclick={() => store.dispatch(setVisibilityFilter(VisibilityFilterType.SHOW_ALL))}>All</button>
-            <button onclick={() => store.dispatch(setVisibilityFilter(VisibilityFilterType.SHOW_ACTIVE))}>Active</button>
-            <button onclick={() => store.dispatch(setVisibilityFilter(VisibilityFilterType.SHOW_COMPLETED))}>Completed</button>
+            <button onclick={() => props.setVisibilityFilter(VisibilityFilterType.SHOW_ALL)}>All</button>
+            <button onclick={() => props.setVisibilityFilter(VisibilityFilterType.SHOW_ACTIVE)}>Active</button>
+            <button onclick={() => props.setVisibilityFilter(VisibilityFilterType.SHOW_COMPLETED)}>Completed</button>
         </div>
     );
 }
+
+export const ConnectedTodoFilter = connect<{}, TodoFilterProps, {}>(
+    () => {},
+    (dispatch, _) => ({
+        setVisibilityFilter: (filter: VisibilityFilterType) => dispatch(setVisibilityFilter(filter))
+    })
+)(TodoFilter);

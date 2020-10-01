@@ -1,15 +1,19 @@
-import { createElement, Element, Context } from "@bikeshaving/crank";
+import { createElement, Element } from "@bikeshaving/crank";
+import { connect } from "../../common/provider";
 import { addTodo } from './todos';
 
-export function AddTodo(this: Context): Element {
+interface AddTodoProps {
+    readonly addTodo: (text: string) => void;
+}
+
+function AddTodo(props: AddTodoProps): Element {
     let todoText: string = '';
-    const store = this.consume("store");
 
     return (
         <form onsubmit={(e: Event) => {
             e.preventDefault();
             if (todoText) {
-                store.dispatch(addTodo(todoText));
+                props.addTodo(todoText);
                 todoText = '';
             }
         }}>
@@ -29,3 +33,10 @@ export function AddTodo(this: Context): Element {
         </form>
     );
 }
+
+export const ConnectedAddTodo = connect<{}, AddTodoProps, {}>(
+    () => {},
+    (dispatch, _) => ({
+        addTodo: (text) => dispatch(addTodo(text))
+    })
+)(AddTodo);

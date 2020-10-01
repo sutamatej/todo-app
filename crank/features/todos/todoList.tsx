@@ -1,28 +1,33 @@
-import { createElement, Element, Context } from "@bikeshaving/crank";
-import { VisibilityFilterType, TodoAppState, toggleTodo } from './todos';
+import { createElement, Element } from "@bikeshaving/crank";
+import { connect } from "../../common/provider";
+import { VisibilityFilterType, TodoAppState, toggleTodo, Todo } from './todos';
 
-function getVisibleTodos(state: TodoAppState) {
-    switch (state.visibilityFilter) {
+function getVisibleTodos(todos: ReadonlyArray<Todo>, filter: VisibilityFilterType) {
+    switch (filter) {
         case VisibilityFilterType.SHOW_ACTIVE:
-            return state.todos.filter(todo => !todo.completed);
+            return todos.filter(todo => !todo.completed);
         case VisibilityFilterType.SHOW_COMPLETED:
-            return state.todos.filter(todo => todo.completed);
+            return todos.filter(todo => todo.completed);
         case VisibilityFilterType.SHOW_ALL:
-            return state.todos;
+            return todos;
     }
 }
 
-export function TodoList(this: Context): Element {
-    const store = this.consume("store");
-    const state = store.getState();
-    const todos = getVisibleTodos(state);
+interface TodoListProps {
+    readonly todos: ReadonlyArray<Todo>;
+    readonly visibilityFilter: VisibilityFilterType;
+    readonly toggleTodo: (index: number) => void;
+}
+
+function TodoList(props: TodoListProps): Element {
+    const todos = getVisibleTodos(props.todos, props.visibilityFilter);
     return (
         <ul>
             {todos.map((todo, index) => (
                 <li
                     key={index}
                     onclick={() => {
-                        store.dispatch(toggleTodo(index));
+                        props.toggleTodo(index);
                     }}
                     style={{'text-decoration': todo.completed ? 'line-through' : 'none'}}
                 >
@@ -32,3 +37,13 @@ export function TodoList(this: Context): Element {
         </ul>
     );
 }
+
+export const ConnectedTodoList = connect<TodoAppState, TodoListProps, {}>(
+    (state) => ({
+        todos: state.todos,
+        visibilityFilter: state.visibilityFilter
+    }),
+    (dispatch, _) => ({
+        toggleTodo: (index) => dispatch(toggleTodo(index))
+    })
+)(TodoList);

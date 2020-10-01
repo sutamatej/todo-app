@@ -4,6 +4,6 @@ export {
     todos
 } from './todos';
 
-export { AddTodo } from './addTodo';
-export { TodoFilter } from './todoFilter';
-export { TodoList } from './todoList';
+export { ConnectedAddTodo as AddTodo } from './addTodo';
+export { ConnectedTodoFilter as TodoFilter } from './todoFilter';
+export { ConnectedTodoList as TodoList } from './todoList';
