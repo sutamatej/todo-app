@@ -22,8 +22,8 @@ export function *Provider<TState, TAction extends Action>(
     this: Context,
     { store, children }: ProviderProps<TState, TAction>
 ) {
-    // save the reference to the store so that it's globally available
-    // in all child components via this.get("store")
+    // save the store reference so that it's globally available
+    // in all child components via this.consume("store")
     this.provide("store", store);
 
     while (true) {
