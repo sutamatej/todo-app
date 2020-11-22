@@ -22,9 +22,9 @@ module.exports = env => {
                 test: /\.css$/,
                 use: [{
                     loader: MiniCssExtractPlugin.loader,
-                    options: {
-                        hmr: true
-                    }
+                    // options: {
+                    //     hmr: true
+                    // }
                 }, 'css-loader']
             }]
         },
