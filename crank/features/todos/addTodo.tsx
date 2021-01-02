@@ -34,9 +34,9 @@ function AddTodo(props: AddTodoProps): Element {
     );
 }
 
-export const ConnectedAddTodo = connect<{}, AddTodoProps, {}>(
-    () => {},
-    (dispatch, _) => ({
-        addTodo: (text) => dispatch(addTodo(text))
+export const ConnectedAddTodo = connect<AddTodoProps>(
+    null,
+    (dispatch) => ({
+        addTodo: (text: string) => dispatch(addTodo(text))
     })
 )(AddTodo);

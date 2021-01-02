@@ -16,9 +16,9 @@ function TodoFilter(props: TodoFilterProps): Element {
     );
 }
 
-export const ConnectedTodoFilter = connect<{}, TodoFilterProps, {}>(
-    () => {},
-    (dispatch, _) => ({
+export const ConnectedTodoFilter = connect<TodoFilterProps>(
+    null,
+    (dispatch) => ({
         setVisibilityFilter: (filter: VisibilityFilterType) => dispatch(setVisibilityFilter(filter))
     })
 )(TodoFilter);

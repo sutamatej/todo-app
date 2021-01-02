@@ -13,11 +13,16 @@ function getVisibleTodos(todos: ReadonlyArray<Todo>, filter: VisibilityFilterTyp
     }
 }
 
-interface TodoListProps {
-    readonly todos: ReadonlyArray<Todo>;
-    readonly visibilityFilter: VisibilityFilterType;
+interface TodoListDispatchProps {
     readonly toggleTodo: (index: number) => void;
 }
+
+interface TodoListStateProps {
+    readonly todos: ReadonlyArray<Todo>;
+    readonly visibilityFilter: VisibilityFilterType;
+}
+
+type TodoListProps = TodoListStateProps & TodoListDispatchProps;
 
 function TodoList(props: TodoListProps): Element {
     const todos = getVisibleTodos(props.todos, props.visibilityFilter);
@@ -38,12 +43,12 @@ function TodoList(props: TodoListProps): Element {
     );
 }
 
-export const ConnectedTodoList = connect<TodoAppState, TodoListProps, {}>(
+export const ConnectedTodoList = connect<TodoListStateProps, TodoListDispatchProps, {}, TodoAppState>(
     (state) => ({
         todos: state.todos,
         visibilityFilter: state.visibilityFilter
     }),
-    (dispatch, _) => ({
-        toggleTodo: (index) => dispatch(toggleTodo(index))
+    (dispatch) => ({
+        toggleTodo: index => dispatch(toggleTodo(index))
     })
 )(TodoList);

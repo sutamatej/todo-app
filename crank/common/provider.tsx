@@ -1,5 +1,5 @@
 import { createElement, Context, Fragment, Children, Component } from "@bikeshaving/crank";
-import { Store, Action, Dispatch, AnyAction } from "redux";
+import { Store, Action, Dispatch } from "redux";
 
 declare global {
     module Crank {
@@ -41,29 +41,48 @@ export function *Provider<TState, TAction extends Action>(
 
 // https://gist.github.com/gaearon/1d19088790e70ac32ea636c025ba424e
 // https://crank.js.org/guides/special-props-and-tags#copy
+// https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/react-redux/index.d.ts
 
-type MapStateToProps<TState, TProps, TOwnProps> = (state: TState, props: TProps) => Partial<TOwnProps> | void;
-type MapDispatchToProps<TProps, TOwnProps> = (dispatch: Dispatch<AnyAction>, props: TProps) => Partial<TOwnProps> | void;
+type MapStateToPropsFunction<TStateProps, TOwnProps, TState> =
+    (state: TState, ownProps: TOwnProps) => TStateProps;
 
-export function connect<TState, TOwnProps, TProps>(
-    mapStateToProps: MapStateToProps<TState, TProps, TOwnProps>,
-    mapDispatchToProps: MapDispatchToProps<TProps, TOwnProps>
-) {
+type MapStateToProps<TStateProps, TOwnProps, TState> =
+    MapStateToPropsFunction<TStateProps, TOwnProps, TState> | null | undefined;
+
+type MapDispatchToProps<TDispatchProps, TOwnProps> =
+    (dispatch: Dispatch<Action>, ownProps: TOwnProps) => TDispatchProps;
+
+type ConnectedComponent<TStateProps, TDispatchProps, TOwnProps> =
+    (WrappedComponent: Component<TStateProps & TDispatchProps & TOwnProps>) =>
+        (this: Context, ...props: TOwnProps[]) => Generator;
+
+export function connect<TStateProps = {}, TDispatchProps = {}, TOwnProps = {}, TState = {}>(
+    mapStateToProps: MapStateToProps<TStateProps, TOwnProps, TState>,
+    mapDispatchToProps: MapDispatchToProps<TDispatchProps, TOwnProps>
+): ConnectedComponent<TState, TDispatchProps, TOwnProps> {
+    // @Robustness the type of the wrapped component should be here something like
+    // <TStateProps & TDispatchProps & TOwnProps>
     return (WrappedComponent: Component) => {
-        return function *Wrapper(this: Context, { props }: { props?: any }) {
+        return function *Wrapper(this: Context, ...props: TOwnProps[]) {
             const store = this.consume("store");
-        
+
             const unsubscribe = store.subscribe(() => {
                 this.refresh();
             });
-        
+
             try {
                 while (true) {
                     yield (
                         <WrappedComponent
-                            { ...props }
-                            { ...mapStateToProps(store.getState(), props) }
-                            { ...mapDispatchToProps(store.dispatch, props) }
+                            { ...props[0] }
+                            { ...mapStateToProps
+                                ? mapStateToProps(store.getState(), props[0])
+                                : undefined
+                            }
+                            { ...mapDispatchToProps
+                                ? mapDispatchToProps(store.dispatch, props[0])
+                                : undefined
+                            }
                         />
                     );
                 }
@@ -71,5 +90,5 @@ export function connect<TState, TOwnProps, TProps>(
                 unsubscribe();
             }
         }
-    }
+    };
 }
