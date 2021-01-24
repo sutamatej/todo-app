@@ -24,8 +24,8 @@ if ((module as any).hot) {
     (module as any).hot.accept(['./app/app', './app/store'], () => {
         // Either 'App' or 'makeStore' or one of their dependencies has been updated
         // so fetch fresh versions of those
-        // Styles get replaced automatically by the mini-css-extract-plugin loader, see
-        // the loader options section in webpack config file
+        // Styles get reloaded automatically by the mini-css-extract-plugin loader, see
+        // the loader options section in webpack config file <- is this still true?
         const NewApp = require('./app/app').App;
         const newMakeStore = require('./app/store').makeStore;
 
