@@ -24,7 +24,8 @@ function AddTodo(props: AddTodoProps): Element {
                         type='text'
                         value={todoText} onchange={(e: Event) => {
                             todoText = (e.currentTarget as HTMLInputElement).value;
-                    }} />
+                        }}
+                    />
                 </div>
                 <div class='four columns'>
                     <button class='button-primary' type="submit">Add Todo</button>

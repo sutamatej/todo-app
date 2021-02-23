@@ -60,7 +60,7 @@ export function connect<TStateProps = {}, TDispatchProps = {}, TOwnProps = {}, T
     mapStateToProps: MapStateToProps<TStateProps, TOwnProps, TState>,
     mapDispatchToProps: MapDispatchToProps<TDispatchProps, TOwnProps>
 ): ConnectedComponent<TState, TDispatchProps, TOwnProps> {
-    // @Robustness the type of the wrapped component should be here something like
+    // @Types the type of the wrapped component should be here something like
     // <TStateProps & TDispatchProps & TOwnProps>
     return (WrappedComponent: Component) => {
         return function *Wrapper(this: Context, ...props: TOwnProps[]) {
@@ -72,17 +72,19 @@ export function connect<TStateProps = {}, TDispatchProps = {}, TOwnProps = {}, T
 
             try {
                 while (true) {
+                    const ownProps = props[0];
+                    const stateProps = mapStateToProps
+                        ? mapStateToProps(store.getState(), ownProps)
+                        : undefined;
+                    const dispatchProps = mapDispatchToProps
+                        ? mapDispatchToProps(store.dispatch, ownProps)
+                        : undefined;
+
                     yield (
                         <WrappedComponent
-                            { ...props[0] }
-                            { ...mapStateToProps
-                                ? mapStateToProps(store.getState(), props[0])
-                                : undefined
-                            }
-                            { ...mapDispatchToProps
-                                ? mapDispatchToProps(store.dispatch, props[0])
-                                : undefined
-                            }
+                            { ...ownProps }
+                            { ...stateProps }
+                            { ...dispatchProps }
                         />
                     );
                 }
