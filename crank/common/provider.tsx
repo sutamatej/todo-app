@@ -53,17 +53,15 @@ type MapDispatchToProps<TDispatchProps, TOwnProps> =
     (dispatch: Dispatch<Action>, ownProps: TOwnProps) => TDispatchProps;
 
 type ConnectedComponent<TStateProps, TDispatchProps, TOwnProps> =
-    (WrappedComponent: Component<TStateProps & TDispatchProps & TOwnProps>) =>
-        (this: Context, ...props: TOwnProps[]) => Generator;
+    (WrappedComponent: Component<TOwnProps & Partial<TStateProps> & Partial<TDispatchProps>>) =>
+        (this: Context, ...props: TOwnProps[]) => Generator<typeof WrappedComponent>;
 
 export function connect<TStateProps = {}, TDispatchProps = {}, TOwnProps = {}, TState = {}>(
     mapStateToProps: MapStateToProps<TStateProps, TOwnProps, TState>,
     mapDispatchToProps: MapDispatchToProps<TDispatchProps, TOwnProps>
 ): ConnectedComponent<TState, TDispatchProps, TOwnProps> {
-    // @Types the type of the wrapped component should be here something like
-    // <TStateProps & TDispatchProps & TOwnProps>
-    return (WrappedComponent: Component) => {
-        return function *Wrapper(this: Context, ...props: TOwnProps[]) {
+    return (WrappedComponent: Component<TOwnProps & Partial<TStateProps> & Partial<TDispatchProps>>) => {
+        return function *Wrapper(this: Context, ...props: TOwnProps[]): Generator<typeof WrappedComponent> {
             const store = this.consume("store");
 
             const unsubscribe = store.subscribe(() => {
